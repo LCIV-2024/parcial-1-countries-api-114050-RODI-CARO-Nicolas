@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  countries-wrapper-api:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    ports:
+      - "8070:8070" # Mapea el puerto 8070 del host al puerto 8070 del contenedor
+    networks:
+      countries-network:
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/your_database_name
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: your_password
+
+
+
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: your_database_name
+      MYSQL_ROOT_PASSWORD: your_password
+    ports:
+      - "3306:3306" # Opcional
+    networks:
+      countries-network:
+
+networks:
+  countries-network:
