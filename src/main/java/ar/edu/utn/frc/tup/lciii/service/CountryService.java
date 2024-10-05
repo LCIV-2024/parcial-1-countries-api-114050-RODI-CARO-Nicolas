@@ -1,11 +1,13 @@
 package ar.edu.utn.frc.tup.lciii.service;
 
+import ar.edu.utn.frc.tup.lciii.dtos.common.response.CountryDTO;
 import ar.edu.utn.frc.tup.lciii.model.Country;
 import ar.edu.utn.frc.tup.lciii.repository.CountryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,6 +26,26 @@ public class CountryService {
                 return response.stream().map(this::mapToCountry).collect(Collectors.toList());
         }
 
+
+
+        public List<CountryDTO> getAllCountriesResponse(String name, String code){
+
+                List<Country> allCountries = getAllCountries();
+                List<CountryDTO> countryDTOList = new ArrayList<>();
+
+                if(name == null && code == null  )
+                {
+                        countryDTOList = allCountries.stream().map(this::mapToDTO).collect(Collectors.toList());
+
+                } else if ( name != null && code == null )
+                {
+                        countryDTOList = allCountries.stream().map(this::mapToDTO).collect(Collectors.toList());
+                }
+
+                return countryDTOList;
+
+        }
+
         /**
          * Agregar mapeo de campo cca3 (String)
          * Agregar mapeo campos borders ((List<String>))
@@ -32,6 +54,8 @@ public class CountryService {
                 Map<String, Object> nameData = (Map<String, Object>) countryData.get("name");
                 return Country.builder()
                         .name((String) nameData.get("common"))
+                        .code((String) countryData.get("cca3") )
+                        .borders((List<String>) countryData.get("borders"))
                         .population(((Number) countryData.get("population")).longValue())
                         .area(((Number) countryData.get("area")).doubleValue())
                         .region((String) countryData.get("region"))
