@@ -31,6 +31,32 @@ public class CountryService {
                 return response.stream().map(this::mapToCountry).collect(Collectors.toList());
         }
 
+        public List<CountryDTO> getAllCountriesResponse(String name, String code) {
+
+                List<Country> allCountries = getAllCountries();
+                List<CountryDTO> countryDTOList = new ArrayList<>();
+
+                if (name == null && code == null) {
+                        countryDTOList = allCountries.stream()
+                                .map(this::mapToDTO)
+                                .collect(Collectors.toList());
+                }
+                else if (name != null && code == null) {
+                        countryDTOList = allCountries.stream()
+                                .filter(country -> country.getName().equalsIgnoreCase(name))
+                                .map(this::mapToDTO)
+                                .collect(Collectors.toList());
+                }
+                else if (name == null && code != null) {
+                        countryDTOList = allCountries.stream()
+                                .filter(country -> country.getCode().equalsIgnoreCase(code))
+                                .map(this::mapToDTO)
+                                .collect(Collectors.toList());
+                }
+
+                return countryDTOList;
+        }
+
 
         public List<CountryDTO> saveCountriesByAmount(SaveCountriesRequestDTO requestDTO) {
 
@@ -97,32 +123,11 @@ public class CountryService {
                 return countryDTOList;
         }
 
-
-
-        public List<CountryDTO> getAllCountriesResponse(String name, String code) {
-
-                List<Country> allCountries = getAllCountries();
-                List<CountryDTO> countryDTOList = new ArrayList<>();
-
-                if (name == null && code == null) {
-                        countryDTOList = allCountries.stream()
-                                .map(this::mapToDTO)
-                                .collect(Collectors.toList());
-                }
-                else if (name != null && code == null) {
-                        countryDTOList = allCountries.stream()
-                                .filter(country -> country.getName().equalsIgnoreCase(name))
-                                .map(this::mapToDTO)
-                                .collect(Collectors.toList());
-                }
-                else if (name == null && code != null) {
-                        countryDTOList = allCountries.stream()
-                                .filter(country -> country.getCode().equalsIgnoreCase(code))
-                                .map(this::mapToDTO)
-                                .collect(Collectors.toList());
-                }
-
-                return countryDTOList;
+        public List<CountryDTO> getCountriesWithMostBorders() {
+                return getAllCountries().stream()
+                        .sorted( (country1, country2)->  Integer.compare(country2.getBorders() != null ? country2.getBorders().size() : 0, country1.getBorders() != null ? country1.getBorders().size() : 0) )
+                        .map(this::mapToDTO)
+                        .collect(Collectors.toList());
         }
 
 

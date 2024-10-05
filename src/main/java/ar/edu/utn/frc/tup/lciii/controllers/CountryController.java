@@ -36,6 +36,11 @@ public class CountryController {
         return ResponseEntity.ok(countryService.getCountriesByLanguage(language));
     }
 
+    @GetMapping("most-borders")
+    public ResponseEntity<List<CountryDTO>> getCountriesWithMostBorders( ) {
+        return ResponseEntity.ok(countryService.getCountriesWithMostBorders());
+    }
+
 
 
 
